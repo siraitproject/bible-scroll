@@ -1,0 +1,6 @@
+{
+  "name": "bible-scroll",
+  "private": true,
+  "type": "module",
+  "description": "One random ESV verse per swipe, with study links for context."
+}
