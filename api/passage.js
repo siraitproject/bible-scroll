@@ -34,8 +34,13 @@ export default async function handler(req, res) {
     const data = await r.json();
     const passage = (data.passages && data.passages[0]) || '';
     const out = { canonical: data.canonical || q };
-    if (mode === 'verse') out.text = passage.replace(/\s+/g, ' ').trim();
-    else out.html = passage;
+    if (mode === 'verse') {
+      // The ESV omits a few verses (e.g. Matt 17:21) and answers with the neighbouring range instead;
+      // report those as empty so the app skips them rather than showing the wrong verse.
+      out.text = /[\u2013-]/.test(out.canonical) ? '' : passage.replace(/\s+/g, ' ').trim();
+    } else {
+      out.html = passage;
+    }
     return res.status(200).json(out);
   } catch (e) {
     return res.status(502).json({ error: 'Could not reach the ESV API.' });
